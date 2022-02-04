@@ -1,7 +1,10 @@
+
 import React, { ChangeEvent, FormEvent, useCallback, useState } from "react"
+import useAuth from "../../hooks/auth"
 
 import api from "../../service/api"
 import Dropzone from "../Dropzone"
+import { notification } from "antd"
 
 import {
   Container,
@@ -13,8 +16,7 @@ import {
   Row} from "./style"
 
 interface ICloseButtonProps {
-  close?: React.MouseEventHandler<HTMLSpanElement> | undefined,
-  //onChange(event: React.ChangeEvent<HTMLInputElement>): void | undefined,
+  close?: React.MouseEventHandler<HTMLSpanElement> | undefined
 }
 interface IModelProps {
     user_id: number
@@ -24,10 +26,11 @@ interface IModelProps {
     description: string
 }
 const Modal: React.FC<ICloseButtonProps> = ({close}) => {
-    const [fileSelected, setFileSelected] = React.useState<File>() // also tried <string | Blob>
+
+    const { token, user } = useAuth();
     
     const [model, setModel] = useState<IModelProps>({
-        user_id: 1,
+        user_id: user.id,
         title: '',
         price: '',
         author:'',
@@ -37,20 +40,13 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
     const [selectedImage, setSelectedImage] = useState<File>();
 
     const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        //console.log(event.target.name, event.target.value);
         const { name, value } = event.target;
         setModel({...model, [name]: value });
     }, [model]);
 
-    function createBook (e: ChangeEvent<HTMLInputElement>) {
-        
-        setModel({
-            ...model,
-            [e.target.name]: e.target.value,
-        })
-    }
     const handleSubmit = useCallback(async (event: FormEvent) => {
         event.preventDefault();
+        const Authorization = `Bearer ${token}`;
 
         const {user_id, title, price, author, description} = model;
 
@@ -65,53 +61,26 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
             data.append('image', selectedImage);
         }
 
-        await api.post('/books', data);
+        await api.post('/books', data, {
+            headers: {
+                Authorization,
+                "Content-type": "multipart/form-data",
+            },                    
+        });
+        
+        notification["success"]({
+            message: 'Sucesso!',
+            duration: 4,
+            description:
+                'Livro registado com sucesso',
+        });    
 
-        alert('Estabelecimento cadastrado com sucesso!');
-        console.log(data);
-        //history.push('/');
-    }, [model, history, selectedImage]);
+    }, [model, selectedImage]);
 
-
-    const uploadFile = function (e: ChangeEvent<HTMLFormElement>) {
-        e.preventDefault()
-        if (fileSelected) {
-            const formData = new FormData();
-            formData.append('title', model.title)
-            formData.append('price', model.price)
-            formData.append('author', model.author)
-            formData.append('description', model.description)
-            formData.append("image", fileSelected, fileSelected.name);
-
-            api
-            .post('/books', formData)
-            .then((res) => {
-                alert("File Upload success");
-                console.log(res)
-            })
-            .catch((err) => alert("File Upload Error"));
-        }
-
-    };
-
-    /*  async function onSubmit (e: ChangeEvent<HTMLFormElement>) {
-        e.preventDefault()
-
-        const response = await api.post('/books', model)
-
-        console.log(response)
-    } */
-    async function onSubmits (e: ChangeEvent<HTMLFormElement>) {
-        e.preventDefault()
-
-        const response = await api.post('/books', model)
-
-        console.log(response)
-    }
 
     return (
         <Container>
-            <Title>Adicionar Livros</Title>
+            <Title>ADICIONAR NOVO LIVRO</Title>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Row>
                     <Column>
@@ -120,12 +89,9 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
                                 type="text" 
                                 name="title" 
                                 required 
-                                /* onChange={(e: ChangeEvent<HTMLInputElement>) => createBook(e)} */
                                 onChange={handleInputChange}
                             />
                             <label>Título do Livro</label>
-                            {/* <input type="number" name="reader_id"   onChange={handleInputChange}/>
-                            <input type="number" name="user_idIndex	"  onChange={handleInputChange}/> */}
                         </InpuBox>
                     </Column>
                     <Column>
@@ -133,7 +99,6 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
                             <input
                                 type="text" 
                                 name="price"           
-                                /* onChange={(e: ChangeEvent<HTMLInputElement>) => createBook(e)} */
                                 required 
                                 onChange={handleInputChange}
                             />
@@ -145,23 +110,15 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
                             <input
                                 type="text" 
                                 name="author"           
-                                /* onChange={(e: ChangeEvent<HTMLInputElement>) => createBook(e)} */
                                 required 
                                 onChange={handleInputChange}
                             />
                             <label>Autor</label>
                         </InpuBox>
                     </Column>
-                    {/* <Column>
-                        <InpuBox>
-                            <input type="date" name="created_at"  />
-                            <label>Data de Lançamento</label>
-                        </InpuBox>
-                    </Column> */}
                     <Column>
                         <InpuBox>
                             <input name="description" id="" 
-                            /* onChange={(e: ChangeEvent<HTMLInputElement>) => createBook(e)}  */
                             onChange={handleInputChange}
                             />
                             <label>Descrição</label>
@@ -169,14 +126,7 @@ const Modal: React.FC<ICloseButtonProps> = ({close}) => {
                     </Column>
                 </Row>
                 <Dropzone onImageUploaded={setSelectedImage} />
-                <SubmitButton type="submit">
-                    {/* <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span> */}
-                    Adicionar
-                </SubmitButton>
-                
+                <SubmitButton type="submit">Adicionar</SubmitButton>                
                 <CloseButton onClick={close}>Fechar</CloseButton>
             </form>
         </Container>

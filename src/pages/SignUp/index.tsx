@@ -37,7 +37,7 @@ const SignUp: React.FC = () => {
         await api.post('/users', model);
         notification["success"]({
             message: 'Sucesso!',
-            duration: 0,
+            duration: 4,
             description:
               'Utilizador registado com sucesso!',
           });
@@ -45,7 +45,7 @@ const SignUp: React.FC = () => {
       } catch (err) {
         notification["error"]({
             message: 'Erro!',
-            duration: 0,
+            duration: 5,
             description:
               'Erro ao registar no utilizador!',
           });

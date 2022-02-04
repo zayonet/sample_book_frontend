@@ -2,9 +2,10 @@ import styled from "styled-components"
 
 export const Container = styled.div`
     
-    height: 300px;
-    background: #e1faec;
+    height: 200px;
+    background: #fdc5b4;
     border-radius: 10px;
+    margin-bottom: 20px;
 
     display: flex;
     justify-content: center;
@@ -21,7 +22,7 @@ export const Container = styled.div`
     width: calc(100% - 60px);
     height: calc(100% - 60px);
     border-radius: 10px;
-    border: 1px dashed #79ab7f;
+    border: 1px dashed #fe4e16;
 
     display: flex;
     flex-direction: column;
@@ -31,7 +32,7 @@ export const Container = styled.div`
     }
 
     > p svg {
-    color: #79ab7f;
+    color: #fe4e16;
     width: 24px;
     height: 24px;
     margin-bottom: 8px;

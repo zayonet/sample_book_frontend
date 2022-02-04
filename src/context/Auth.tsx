@@ -4,7 +4,7 @@ import api from '../service/api';
 
 
 interface IUser {
-    id: number | string;
+    id: number;
     name: string;
     email: string;
     active: string;

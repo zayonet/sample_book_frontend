@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { Container, BookContainer } from './style'
 
@@ -11,12 +11,15 @@ import api from "../../service/api"
 
 import formatCurrency from '../../utils/formatCurrency'
 import formatDate from '../../utils/formatDate'
+import useAuth from "../../hooks/auth";
+import { notification } from "antd";
 
 interface IData {
-    title : string,
-    author: string,
-    amount: string,
-    image: string,
+    id: number;
+    title : string;
+    author: string;
+    amount: string;
+    image: string;  
     created_at: string
 }
 
@@ -24,26 +27,38 @@ const Books: React.FC = () => {
     const [data, setData] = useState<IData[]>([])
     const [wordEntered, setWordEntered] = useState("");
     
-    async function loadBooks() {        
-        
-        const response = await api.get('/books/books')
-        console.log(response)
-        
-        const formatedDate = response.data.map((item: { name: string; author: string; price: string; image: string; created_at: string; }) => {
+    const { token } = useAuth();
+
+    const loadBooks = useCallback(async () => {
+        try {
+          const Authorization = `Bearer ${token}`;
+          const response = await api.get('/books/books', {
+            headers: { Authorization },
+          });
+          const formatedDate = response.data.map((item: { id: number, title: string; author: string; price: string; image: string; created_at: string; }) => {
             return {
-                title : item.name,
+                id : item.id,
+                title : item.title,
                 author: item.author,
                 image: item.image,
                 amount: formatCurrency(Number(item.price)),
                 created_at: formatDate(item.created_at)
             }
         })
-        setData(formatedDate)
+          setData(formatedDate);
+        } catch (err) {
+            notification["error"]({
+                message: 'Erro!',
+                duration: 4,
+                description:
+                    'Falha ao listar os livros!',
+            });
+        }
+      }, [token]);
 
-    }
     useEffect(()=> { 
         loadBooks()
-    },[])
+    },[loadBooks])
     
     const handleFilter = (word:string) => {
         const searchWord = word
@@ -75,10 +90,11 @@ const Books: React.FC = () => {
                 { 
                     data.map(item => (
                         <Book 
-                            key={item.title} 
+                            key={item.id} 
+                            id={item.id}
                             title={item.title} 
                             author={item.author}  
-                            /* image={item.image} */  
+                            image={item.image}  
                             amount={item.amount}  
                             date={item.created_at}
                         />

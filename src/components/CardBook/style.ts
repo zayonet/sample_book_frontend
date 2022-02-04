@@ -59,7 +59,27 @@ export const Container = styled.div`
             > button:hover{box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5)};
 
         }
-    }
+    }    
+`
+export const Options = styled.div`
 
-    
+        max-width: 250px!important;
+        margin: 5px 0;
+        
+        > button {
+            background-color: #ddd;
+            border: none;
+            color: black;
+            padding: 2px 5px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 3px;
+
+            &:hover {
+                background-color: #f1f1f1;
+            }
+        }
 `

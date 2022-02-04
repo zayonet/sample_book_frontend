@@ -31,6 +31,13 @@ export const MenuItemLink = styled.span`
         }
 
     }
+    .avatar {
+        vertical-align: middle;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
 `;
 
 export const Dropdown = styled.div`

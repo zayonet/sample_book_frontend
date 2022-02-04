@@ -8,13 +8,6 @@ export const Container = styled.div`
     align-items: center;
     
     width: 100%;
-    /*
-    display: grid;
-    grid-template-columns: auto auto auto auto;
-    grid-gap: 10px;
-    padding: 10px 25px;
-    align-items: center;
-    */
 `
 export const Column = styled.div`
     width: 50%;
@@ -25,7 +18,10 @@ export const Column = styled.div`
     > div{
 
         color: #fff;
-
+        > h2{            
+            color: #fff;
+            text-transform: uppercase;
+        }
         > p{            
             margin-top: 1em;
         }
@@ -36,7 +32,6 @@ export const Column = styled.div`
         padding: 0.25em 1em;
         border-radius: 45px;
 
-        /* Color the border and text with theme.colors */
         color: #fff;
         background-color: #fe4e16;
         border: 2px solid #fe4e16;

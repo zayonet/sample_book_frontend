@@ -1,6 +1,6 @@
-import React, { ChangeEvent, useCallback, useState, } from 'react';
+import React, { ChangeEvent, useCallback, useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { notification } from 'antd';
 
@@ -17,6 +17,8 @@ import useAuth from '../../hooks/auth';
 const LoginAsWriter: React.FC = () => {
     //const {user, signIn} = useContext(AuthContext)
     const {user, signIn} = useAuth()
+    const navigate   = useNavigate ();
+
     const [model, setModel] = useState<ICredentiaslWriter>({
         email: '',
         password: '',
@@ -24,13 +26,13 @@ const LoginAsWriter: React.FC = () => {
 
 
     const changeValuesModel = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-        setModel({
-        ...model,
-        [e.target.name]: e.target.value,
-        });
-    },
-    [model],
+        (e: ChangeEvent<HTMLInputElement>) => {
+            setModel({
+            ...model,
+            [e.target.name]: e.target.value,
+            });
+        },
+        [model],
     );
     
     const onSubmit = useCallback(
@@ -38,19 +40,22 @@ const LoginAsWriter: React.FC = () => {
         e.preventDefault();
         console.log(model)
         try {
-        await signIn(model);
-        notification["success"]({
-            message: 'Sucesso!',
-            duration: 0,
-            description:
-                'Utilizador autenticado com sucesso!',
+            await signIn(model);
+            notification["success"]({
+                message: 'Sucesso!',
+                duration: 4,
+                description:
+                    'Utilizador autenticado com sucesso!',
             });
+            
+            navigate('/books');  
+
         } catch (err) {
-        notification["error"]({
-            message: 'Erro!',
-            duration: 0,
-            description:
-                'Erro ao autenticar no utilizador!',
+            notification["error"]({
+                message: 'Erro!',
+                duration: 4,
+                description:
+                    'Erro ao autenticar no utilizador!',
             });
         }
     },
@@ -81,7 +86,7 @@ const LoginAsWriter: React.FC = () => {
                     />
                     <Button type="submit">Entrar</Button>
                     <FormActions>
-                        <Link to="/signup/writer">Faça seu cadastro</Link>
+                        <Link to="/signup">Faça seu cadastro</Link>
                         <Link to="/">Voltar</Link>
                     </FormActions>
                 </Form>
